@@ -12,7 +12,7 @@ if not exist app.ico (
 )
 py -m pip install --upgrade pip
 py -m pip install -r requirements.txt pyinstaller
-py -m PyInstaller --noconfirm --clean --onefile --windowed --name TrafikSaveurs --icon app.ico --add-data "web;web" --add-data "app.ico;." app.py
+py -m PyInstaller --noconfirm --clean --onefile --windowed --name TrafikSaveurs --icon app.ico --add-data "web;web" --add-data "app.ico;." --hidden-import expiration app.py
 if errorlevel 1 (echo Echec du build. & pause & exit /b 1)
 echo.
 echo Termine : dist\TrafikSaveurs.exe

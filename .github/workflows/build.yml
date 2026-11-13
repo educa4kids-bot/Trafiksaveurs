@@ -1,0 +1,46 @@
+name: Build Windows EXE
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt pyinstaller
+
+      - name: Prepare web folder
+        run: |
+          if (-not (Test-Path web\index.html)) {
+            New-Item -ItemType Directory -Force web | Out-Null
+            Copy-Item Index.html web\index.html -Force
+          }
+
+      - name: Build EXE (PyInstaller)
+        run: >
+          pyinstaller --noconfirm --clean --onefile --windowed
+          --name TrafikSaveurs
+          --icon app.ico
+          --add-data "web;web"
+          --add-data "app.ico;."
+          app.py
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: TrafikSaveurs-Windows
+          path: |
+            dist/TrafikSaveurs.exe
+            install.bat
+            README.md
